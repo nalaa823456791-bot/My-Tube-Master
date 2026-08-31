@@ -1,0 +1,3917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MyTube Master</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0b0b0f;
+  --card:#17171d;
+  --card2:#202027;
+  --text:#fff;
+  --muted:#aaa;
+  --accent:#ff1744;
+  --accent2:#ff4567;
+  --border:#303038;
+  --success:#20d47b;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+.hidden{
+  display:none!important;
+}
+
+header{
+  height:68px;
+  background:#111116;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding:0 18px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:210px;
+  font-weight:bold;
+  font-size:21px;
+}
+
+.logo-icon{
+  width:38px;
+  height:28px;
+  border-radius:8px;
+  background:var(--accent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:17px;
+}
+
+.search{
+  flex:1;
+  max-width:650px;
+  display:flex;
+}
+
+.search input{
+  width:100%;
+  background:#19191f;
+  color:#fff;
+  border:1px solid #33333b;
+  border-radius:25px 0 0 25px;
+  padding:12px 18px;
+  outline:none;
+}
+
+.search button{
+  width:55px;
+  border-radius:0 25px 25px 0;
+  background:#292930;
+  color:#fff;
+}
+
+.header-actions{
+  margin-left:auto;
+  display:flex;
+  gap:8px;
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:transparent;
+  color:#fff;
+  font-size:19px;
+}
+
+.icon-btn:hover{
+  background:#25252c;
+}
+
+.avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#555;
+  object-fit:cover;
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 68px);
+}
+
+.sidebar{
+  width:235px;
+  background:#101015;
+  border-right:1px solid var(--border);
+  padding:15px 10px;
+  position:fixed;
+  top:68px;
+  bottom:0;
+  overflow:auto;
+}
+
+.nav-btn{
+  width:100%;
+  padding:13px 15px;
+  margin:3px 0;
+  background:transparent;
+  color:#ddd;
+  text-align:left;
+  border-radius:10px;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+  background:#25252c;
+  color:#fff;
+}
+
+.nav-btn span{
+  margin-right:13px;
+}
+
+.main{
+  margin-left:235px;
+  width:calc(100% - 235px);
+  padding:22px;
+}
+
+.chips{
+  display:flex;
+  gap:9px;
+  overflow:auto;
+  padding-bottom:18px;
+}
+
+.chip{
+  white-space:nowrap;
+  padding:9px 16px;
+  background:#24242b;
+  color:#eee;
+  border-radius:20px;
+}
+
+.chip.active,
+.chip:hover{
+  background:#fff;
+  color:#111;
+}
+
+.hero{
+  background:linear-gradient(135deg,#211116,#17171d);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:30px;
+  margin-bottom:25px;
+}
+
+.hero h1{
+  font-size:34px;
+  margin-bottom:8px;
+}
+
+.hero p{
+  color:var(--muted);
+  margin-bottom:18px;
+}
+
+.primary{
+  background:var(--accent);
+  color:#fff;
+  padding:11px 18px;
+  border-radius:9px;
+  font-weight:bold;
+}
+
+.primary:hover{
+  background:var(--accent2);
+}
+
+.primary:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.secondary{
+  background:#292930;
+  color:#fff;
+  padding:11px 18px;
+  border-radius:9px;
+}
+
+.section-title{
+  margin:22px 0 15px;
+  font-size:22px;
+}
+
+.video-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(245px,1fr));
+  gap:18px;
+}
+
+.video-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:13px;
+  overflow:hidden;
+  transition:.2s;
+}
+
+.video-card:hover{
+  transform:translateY(-3px);
+}
+
+.thumb{
+  width:100%;
+  aspect-ratio:16/9;
+  background:#25252c;
+  object-fit:cover;
+  cursor:pointer;
+}
+
+.video-info{
+  padding:12px;
+}
+
+.video-title{
+  font-size:16px;
+  font-weight:bold;
+  line-height:1.35;
+  cursor:pointer;
+}
+
+.video-meta{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:7px;
+}
+
+.card-actions{
+  display:flex;
+  gap:6px;
+  margin-top:10px;
+}
+
+.small-btn{
+  background:#292930;
+  color:#fff;
+  padding:7px 10px;
+  border-radius:7px;
+  font-size:12px;
+}
+
+.profile-cover{
+  height:180px;
+  border-radius:18px;
+  background:linear-gradient(120deg,#5b111f,#16161c);
+  overflow:hidden;
+}
+
+.profile-cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.profile-head{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:20px 5px;
+}
+
+.profile-avatar{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid var(--bg);
+}
+
+.profile-name{
+  font-size:27px;
+  font-weight:bold;
+}
+
+.profile-email,
+.profile-stats{
+  color:var(--muted);
+  margin-top:6px;
+}
+
+.auth-wrap{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  background:radial-gradient(circle at top,#281118,#09090c 55%);
+}
+
+.auth-card{
+  width:430px;
+  max-width:100%;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 20px 60px #0008;
+}
+
+.auth-card h1{
+  text-align:center;
+  margin-bottom:8px;
+}
+
+.auth-card p{
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:22px;
+}
+
+.field{
+  width:100%;
+  background:#101015;
+  color:#fff;
+  border:1px solid #35353d;
+  border-radius:9px;
+  padding:13px;
+  margin:7px 0;
+  outline:none;
+}
+
+.auth-card button{
+  width:100%;
+  margin-top:8px;
+}
+
+.google{
+  background:#fff;
+  color:#111;
+  padding:12px;
+  border-radius:9px;
+}
+
+.divider{
+  text-align:center;
+  color:#777;
+  margin:18px 0;
+}
+
+.link{
+  color:#ff526e;
+  cursor:pointer;
+  text-align:center;
+  margin-top:15px;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:#000b;
+  z-index:500;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal-box{
+  width:600px;
+  max-width:100%;
+  max-height:90vh;
+  overflow:auto;
+  background:#17171d;
+  border:1px solid #36363e;
+  border-radius:18px;
+  padding:25px;
+}
+
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+
+.close{
+  background:#292930;
+  color:#fff;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+}
+
+textarea.field{
+  min-height:110px;
+  resize:vertical;
+}
+
+.player{
+  width:100%;
+  max-height:65vh;
+  background:#000;
+  border-radius:12px;
+}
+
+.watch-title{
+  font-size:24px;
+  margin-top:15px;
+}
+
+.watch-meta{
+  color:var(--muted);
+  margin-top:8px;
+}
+
+.watch-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:15px 0;
+}
+
+.comment{
+  border-top:1px solid var(--border);
+  padding:14px 0;
+}
+
+.comment strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+.comment small{
+  color:#777;
+}
+
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+}
+
+.stat{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:20px;
+}
+
+.stat b{
+  font-size:27px;
+  display:block;
+  margin-top:5px;
+}
+
+.admin-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px;
+  margin:8px 0;
+}
+
+.empty{
+  padding:50px;
+  text-align:center;
+  color:var(--muted);
+}
+
+/* FAST UPLOAD */
+
+.upload-panel{
+  width:700px;
+  max-width:100%;
+  margin:auto;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:25px;
+}
+
+.file-info{
+  background:#101015;
+  border:1px solid #303038;
+  padding:13px;
+  border-radius:10px;
+  margin:10px 0;
+  color:#bbb;
+}
+
+.progress-wrap{
+  margin-top:18px;
+  display:none;
+}
+
+.progress-track{
+  height:13px;
+  width:100%;
+  background:#292930;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#ff1744,#ff4567);
+  border-radius:20px;
+  transition:width .2s;
+}
+
+.progress-number{
+  font-size:24px;
+  font-weight:bold;
+  margin-top:12px;
+}
+
+.upload-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+
+.upload-stat{
+  background:#101015;
+  border:1px solid #303038;
+  padding:12px;
+  border-radius:10px;
+}
+
+.upload-stat span{
+  display:block;
+  color:#888;
+  font-size:12px;
+}
+
+.upload-stat b{
+  display:block;
+  margin-top:4px;
+  font-size:15px;
+}
+
+.upload-status{
+  color:#aaa;
+  margin-top:15px;
+  min-height:20px;
+}
+
+.success-text{
+  color:var(--success);
+}
+
+.bottom-nav{
+  display:none;
+}
+
+@media(max-width:850px){
+
+  .logo{
+    min-width:auto;
+  }
+
+  .logo-text{
+    display:none;
+  }
+
+  .sidebar{
+    display:none;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+    padding:15px;
+    padding-bottom:80px;
+  }
+
+  .bottom-nav{
+    display:flex;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:65px;
+    background:#111116;
+    border-top:1px solid var(--border);
+    z-index:200;
+    justify-content:space-around;
+  }
+
+  .bottom-nav button{
+    background:transparent;
+    color:#aaa;
+    font-size:12px;
+  }
+
+  .bottom-nav button span{
+    display:block;
+    font-size:20px;
+    margin-bottom:2px;
+  }
+
+  .search{
+    max-width:none;
+  }
+
+  .header-actions .desktop-only{
+    display:none;
+  }
+
+  .hero h1{
+    font-size:26px;
+  }
+
+  .upload-stats{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUTH -->
+
+<div id="authScreen" class="auth-wrap">
+
+<div class="auth-card">
+
+<div class="logo" style="justify-content:center;margin-bottom:20px">
+
+<div class="logo-icon">▶</div>
+
+<span>MyTube Master</span>
+
+</div>
+
+<h1 id="authTitle">Sign In</h1>
+
+<p id="authSubtitle">
+Sign in to continue to MyTube Master
+</p>
+
+<div id="registerNameWrap" class="hidden">
+
+<input
+id="registerName"
+class="field"
+placeholder="Channel Name">
+
+</div>
+
+<input
+id="authEmail"
+class="field"
+type="email"
+placeholder="Email">
+
+<input
+id="authPassword"
+class="field"
+type="password"
+placeholder="Password">
+
+<button
+class="primary"
+onclick="emailAuth()"
+id="authMainButton">
+
+Sign In
+
+</button>
+
+<div class="divider">OR</div>
+
+<button
+class="google"
+onclick="googleLogin()">
+
+🌐 Continue with Google
+
+</button>
+
+<div
+class="link"
+onclick="toggleAuth()"
+id="authToggle">
+
+Create a new account
+
+</div>
+
+<div
+id="authError"
+style="color:#ff6b7f;text-align:center;margin-top:12px">
+
+</div>
+
+</div>
+</div>
+
+
+<!-- APP -->
+
+<div id="appScreen" class="hidden">
+
+<header>
+
+<div class="logo">
+
+<div class="logo-icon">▶</div>
+
+<span class="logo-text">
+MyTube Master
+</span>
+
+</div>
+
+<div class="search">
+
+<input
+id="searchInput"
+placeholder="Search videos and channels..."
+oninput="searchVideos()">
+
+<button onclick="searchVideos()">
+🔍
+</button>
+
+</div>
+
+<div class="header-actions">
+
+<button
+class="icon-btn desktop-only"
+onclick="showPage('upload')">
+
+＋
+
+</button>
+
+<button
+class="icon-btn"
+onclick="showPage('notifications')">
+
+🔔
+
+</button>
+
+<button
+class="icon-btn"
+onclick="showPage('profile')">
+
+<img
+id="headerAvatar"
+class="avatar"
+src=""
+alt="">
+
+</button>
+
+</div>
+
+</header>
+
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<button class="nav-btn active"
+onclick="showPage('home')">
+<span>🏠</span> Home
+</button>
+
+<button class="nav-btn"
+onclick="showPage('trending')">
+<span>🔥</span> Trending
+</button>
+
+<button class="nav-btn"
+onclick="showPage('shorts')">
+<span>🎬</span> Shorts
+</button>
+
+<button class="nav-btn"
+onclick="showPage('subscriptions')">
+<span>📺</span> Subscriptions
+</button>
+
+<button class="nav-btn"
+onclick="showPage('saved')">
+<span>🔖</span> Saved Videos
+</button>
+
+<button class="nav-btn"
+onclick="showPage('history')">
+<span>🕘</span> Watch History
+</button>
+
+<button class="nav-btn"
+onclick="showPage('games')">
+<span>🎮</span> Games
+</button>
+
+<hr style="border-color:#292930;margin:15px 0">
+
+<button class="nav-btn"
+onclick="showPage('profile')">
+<span>👤</span> Your Profile
+</button>
+
+<button class="nav-btn"
+onclick="showPage('upload')">
+<span>⬆️</span> Upload Video
+</button>
+
+<button
+id="adminNav"
+class="nav-btn hidden"
+onclick="showPage('admin')">
+
+<span>🛡️</span> Admin Panel
+
+</button>
+
+<button class="nav-btn"
+onclick="logout()">
+<span>🚪</span> Logout
+</button>
+
+</aside>
+
+
+<main class="main">
+
+
+<!-- HOME -->
+
+<section id="homePage">
+
+<div class="hero">
+
+<h1>
+Welcome to MyTube Master
+</h1>
+
+<p>
+Watch, upload, subscribe and share your favorite videos.
+</p>
+
+<button
+class="primary"
+onclick="showPage('upload')">
+
+＋ Upload Video
+
+</button>
+
+</div>
+
+<div class="chips">
+
+<button
+class="chip active"
+onclick="filterCategory('All',this)">
+All
+</button>
+
+<button
+class="chip"
+onclick="filterCategory('Gaming',this)">
+Gaming
+</button>
+
+<button
+class="chip"
+onclick="filterCategory('Music',this)">
+Music
+</button>
+
+<button
+class="chip"
+onclick="filterCategory('Tech',this)">
+Tech
+</button>
+
+<button
+class="chip"
+onclick="filterCategory('Education',this)">
+Education
+</button>
+
+<button
+class="chip"
+onclick="filterCategory('Entertainment',this)">
+Entertainment
+</button>
+
+</div>
+
+<h2 class="section-title">
+Latest Videos
+</h2>
+
+<div
+id="videoGrid"
+class="video-grid">
+</div>
+
+</section>
+
+
+<!-- TRENDING -->
+
+<section
+id="trendingPage"
+class="hidden">
+
+<h1 class="section-title">
+🔥 Trending
+</h1>
+
+<div
+id="trendingGrid"
+class="video-grid">
+</div>
+
+</section>
+
+
+<!-- SHORTS -->
+
+<section
+id="shortsPage"
+class="hidden">
+
+<h1 class="section-title">
+🎬 Shorts
+</h1>
+
+<div
+id="shortsGrid"
+class="video-grid">
+</div>
+
+</section>
+
+
+<!-- SUBSCRIPTIONS -->
+
+<section
+id="subscriptionsPage"
+class="hidden">
+
+<h1 class="section-title">
+📺 Subscriptions
+</h1>
+
+<div
+id="subscriptionsGrid"
+class="video-grid">
+</div>
+
+</section>
+
+
+<!-- SAVED -->
+
+<section
+id="savedPage"
+class="hidden">
+
+<h1 class="section-title">
+🔖 Saved Videos
+</h1>
+
+<div
+id="savedGrid"
+class="video-grid">
+</div>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section
+id="historyPage"
+class="hidden">
+
+<h1 class="section-title">
+🕘 Watch History
+</h1>
+
+<div
+id="historyGrid"
+class="video-grid">
+</div>
+
+</section>
+
+
+<!-- GAMES -->
+
+<section
+id="gamesPage"
+class="hidden">
+
+<div class="hero">
+
+<h1>
+🎮 MyTube Games
+</h1>
+
+<p>
+Play games added to MyTube Master.
+</p>
+
+<button
+class="primary"
+onclick="openGameModal()">
+
+＋ Add Game
+
+</button>
+
+</div>
+
+<div
+id="gamesGrid"
+class="video-grid">
+</div>
+
+</section>
+
+
+<!-- PROFILE -->
+
+<section
+id="profilePage"
+class="hidden">
+
+<div class="profile-cover">
+
+<img
+id="profileBanner"
+src=""
+alt="">
+
+</div>
+
+<div class="profile-head">
+
+<img
+id="profileAvatar"
+class="profile-avatar"
+src=""
+alt="">
+
+<div style="flex:1">
+
+<div
+id="profileName"
+class="profile-name">
+User
+</div>
+
+<div
+id="profileEmail"
+class="profile-email">
+</div>
+
+<div
+id="profileStats"
+class="profile-stats">
+</div>
+
+</div>
+
+<button
+class="secondary"
+onclick="openProfileModal()">
+
+Edit Profile
+
+</button>
+
+</div>
+
+<h2 class="section-title">
+My Uploaded Videos
+</h2>
+
+<div
+id="myVideosGrid"
+class="video-grid">
+</div>
+
+</section>
+
+
+<!-- FAST UPLOAD -->
+
+<section
+id="uploadPage"
+class="hidden">
+
+<h1 class="section-title">
+⬆️ Fast Video Upload
+</h1>
+
+<div class="upload-panel">
+
+<input
+id="videoTitle"
+class="field"
+placeholder="Video title">
+
+<textarea
+id="videoDescription"
+class="field"
+placeholder="Description">
+</textarea>
+
+<select
+id="videoCategory"
+class="field">
+
+<option>General</option>
+<option>Gaming</option>
+<option>Music</option>
+<option>Tech</option>
+<option>Education</option>
+<option>Entertainment</option>
+
+</select>
+
+<select
+id="videoType"
+class="field">
+
+<option value="video">
+Regular Video
+</option>
+
+<option value="short">
+Short
+</option>
+
+</select>
+
+<input
+id="videoFile"
+class="field"
+type="file"
+accept="video/*"
+onchange="showSelectedVideo()">
+
+<div
+id="videoFileInfo"
+class="file-info hidden">
+</div>
+
+<input
+id="thumbnailFile"
+class="field"
+type="file"
+accept="image/*">
+
+<div
+id="uploadProgress"
+class="progress-wrap">
+
+<div class="progress-track">
+
+<div
+id="progressBar"
+class="progress-bar">
+</div>
+
+</div>
+
+<div
+id="progressNumber"
+class="progress-number">
+0%
+</div>
+
+<div class="upload-stats">
+
+<div class="upload-stat">
+
+<span>Uploaded</span>
+
+<b id="uploadedSize">
+0 MB
+</b>
+
+</div>
+
+<div class="upload-stat">
+
+<span>Speed</span>
+
+<b id="uploadSpeed">
+0 MB/s
+</b>
+
+</div>
+
+<div class="upload-stat">
+
+<span>Time Left</span>
+
+<b id="uploadTime">
+Calculating...
+</b>
+
+</div>
+
+</div>
+
+<div
+id="uploadStatus"
+class="upload-status">
+Preparing upload...
+</div>
+
+</div>
+
+<button
+id="uploadButton"
+class="primary"
+onclick="uploadVideo()">
+
+🚀 Fast Upload to MyTube Master
+
+</button>
+
+</div>
+
+</section>
+
+
+<!-- NOTIFICATIONS -->
+
+<section
+id="notificationsPage"
+class="hidden">
+
+<h1 class="section-title">
+🔔 Notifications
+</h1>
+
+<div
+id="notificationsList">
+</div>
+
+</section>
+
+
+<!-- ADMIN -->
+
+<section
+id="adminPage"
+class="hidden">
+
+<h1 class="section-title">
+🛡️ Admin Panel
+</h1>
+
+<div class="stat-grid">
+
+<div class="stat">
+Users
+<b id="adminUsers">0</b>
+</div>
+
+<div class="stat">
+Videos
+<b id="adminVideos">0</b>
+</div>
+
+<div class="stat">
+Comments
+<b id="adminComments">0</b>
+</div>
+
+</div>
+
+<h2 class="section-title">
+Manage Videos
+</h2>
+
+<div
+id="adminVideoList">
+</div>
+
+</section>
+
+</main>
+</div>
+
+
+<div class="bottom-nav">
+
+<button onclick="showPage('home')">
+<span>🏠</span>Home
+</button>
+
+<button onclick="showPage('trending')">
+<span>🔥</span>Trending
+</button>
+
+<button onclick="showPage('upload')">
+<span>＋</span>Upload
+</button>
+
+<button onclick="showPage('saved')">
+<span>🔖</span>Saved
+</button>
+
+<button onclick="showPage('profile')">
+<span>👤</span>Profile
+</button>
+
+</div>
+
+</div>
+
+
+<!-- VIDEO MODAL -->
+
+<div
+id="videoModal"
+class="modal hidden">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>Watch Video</h2>
+
+<button
+class="close"
+onclick="closeModal('videoModal')">
+×
+</button>
+
+</div>
+
+<video
+id="watchPlayer"
+class="player"
+controls>
+</video>
+
+<div
+id="watchTitle"
+class="watch-title">
+</div>
+
+<div
+id="watchMeta"
+class="watch-meta">
+</div>
+
+<div class="watch-actions">
+
+<button
+class="primary"
+id="likeButton">
+👍 Like
+</button>
+
+<button
+class="secondary"
+id="subscribeButton">
+Subscribe
+</button>
+
+<button
+class="secondary"
+id="saveButton">
+🔖 Save
+</button>
+
+</div>
+
+<div style="margin-top:20px">
+
+<h3>Comments</h3>
+
+<div
+style="display:flex;gap:8px;margin-top:12px">
+
+<input
+id="commentInput"
+class="field"
+placeholder="Write a comment..."
+style="margin:0">
+
+<button
+class="primary"
+onclick="addComment()">
+Post
+</button>
+
+</div>
+
+<div
+id="commentsList">
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- PROFILE MODAL -->
+
+<div
+id="profileModal"
+class="modal hidden">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>Edit Profile</h2>
+
+<button
+class="close"
+onclick="closeModal('profileModal')">
+×
+</button>
+
+</div>
+
+<input
+id="editName"
+class="field"
+placeholder="Channel name">
+
+<input
+id="profilePhotoFile"
+class="field"
+type="file"
+accept="image/*">
+
+<input
+id="bannerFile"
+class="field"
+type="file"
+accept="image/*">
+
+<button
+class="primary"
+onclick="saveProfile()">
+
+Save Profile
+
+</button>
+
+</div>
+</div>
+
+
+<!-- GAME MODAL -->
+
+<div
+id="gameModal"
+class="modal hidden">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>Add Game</h2>
+
+<button
+class="close"
+onclick="closeModal('gameModal')">
+×
+</button>
+
+</div>
+
+<input
+id="gameName"
+class="field"
+placeholder="Game name">
+
+<input
+id="gameCategory"
+class="field"
+placeholder="Category">
+
+<input
+id="gameUrl"
+class="field"
+placeholder="Game URL / HTML page URL">
+
+<button
+class="primary"
+onclick="addGame()">
+
+Add Game
+
+</button>
+
+</div>
+</div>
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+
+import {
+getAuth,
+GoogleAuthProvider,
+signInWithPopup,
+signInWithEmailAndPassword,
+createUserWithEmailAndPassword,
+onAuthStateChanged,
+signOut,
+updateProfile
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+getDoc,
+doc,
+setDoc,
+updateDoc,
+deleteDoc,
+query,
+orderBy,
+increment,
+serverTimestamp
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+import {
+getStorage,
+ref,
+uploadBytesResumable,
+getDownloadURL
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+
+
+/* =========================
+FIREBASE CONFIG
+========================= */
+
+const firebaseConfig={
+
+apiKey:"AIzaSyC-WLw5NR15zIkbiN9Vq-d0yA8nlg-thn4",
+
+authDomain:"mytubemastei.firebaseapp.com",
+
+databaseURL:
+"https://mytubemastei-default-rtdb.firebaseio.com",
+
+projectId:"mytubemastei",
+
+storageBucket:
+"mytubemastei.firebasestorage.app",
+
+messagingSenderId:"77460266020",
+
+appId:
+"1:77460266020:web:0fe693efe7fc8f37750cb1"
+
+};
+
+
+const app=initializeApp(firebaseConfig);
+
+const auth=getAuth(app);
+
+const db=getFirestore(app);
+
+const storage=getStorage(app);
+
+
+let currentUser=null;
+
+let allVideos=[];
+
+let currentVideo=null;
+
+let registerMode=false;
+
+let currentCategory="All";
+
+
+/* =========================
+AUTH
+========================= */
+
+window.toggleAuth=function(){
+
+registerMode=!registerMode;
+
+document
+.getElementById("registerNameWrap")
+.classList.toggle(
+"hidden",
+!registerMode
+);
+
+document.getElementById("authTitle")
+.textContent=
+registerMode?
+"Create Account":
+"Sign In";
+
+document.getElementById("authSubtitle")
+.textContent=
+registerMode?
+"Create your MyTube Master channel":
+"Sign in to continue to MyTube Master";
+
+document.getElementById("authMainButton")
+.textContent=
+registerMode?
+"Create Account":
+"Sign In";
+
+document.getElementById("authToggle")
+.textContent=
+registerMode?
+"Already have an account? Sign In":
+"Create a new account";
+
+};
+
+
+window.emailAuth=async function(){
+
+const email=
+document
+.getElementById("authEmail")
+.value
+.trim();
+
+const password=
+document
+.getElementById("authPassword")
+.value;
+
+const error=
+document.getElementById("authError");
+
+error.textContent="";
+
+try{
+
+if(registerMode){
+
+const name=
+document
+.getElementById("registerName")
+.value
+.trim();
+
+if(!name){
+
+error.textContent=
+"Enter channel name";
+
+return;
+}
+
+const result=
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+await updateProfile(
+result.user,
+{
+displayName:name
+}
+);
+
+await setDoc(
+doc(db,"users",result.user.uid),
+{
+uid:result.user.uid,
+name:name,
+email:email,
+photoUrl:"",
+bannerUrl:"",
+subscribers:0,
+subscribedTo:0,
+isAdmin:false,
+createdAt:serverTimestamp()
+}
+);
+
+}else{
+
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+}
+
+}catch(e){
+
+error.textContent=
+e.message.replace("Firebase: ","");
+
+}
+
+};
+
+
+window.googleLogin=async function(){
+
+try{
+
+const provider=
+new GoogleAuthProvider();
+
+const result=
+await signInWithPopup(
+auth,
+provider
+);
+
+const user=result.user;
+
+const userRef=
+doc(db,"users",user.uid);
+
+const snap=
+await getDoc(userRef);
+
+if(!snap.exists()){
+
+await setDoc(
+userRef,
+{
+uid:user.uid,
+name:user.displayName||"MyTube User",
+email:user.email||"",
+photoUrl:user.photoURL||"",
+bannerUrl:"",
+subscribers:0,
+subscribedTo:0,
+isAdmin:false,
+createdAt:serverTimestamp()
+}
+);
+
+}
+
+}catch(e){
+
+document
+.getElementById("authError")
+.textContent=e.message;
+
+}
+
+};
+
+
+window.logout=async function(){
+
+await signOut(auth);
+
+};
+
+
+/* =========================
+AUTH STATE
+========================= */
+
+onAuthStateChanged(
+auth,
+async user=>{
+
+currentUser=user;
+
+if(user){
+
+document
+.getElementById("authScreen")
+.classList.add("hidden");
+
+document
+.getElementById("appScreen")
+.classList.remove("hidden");
+
+await loadUser();
+
+await loadVideos();
+
+await checkAdmin();
+
+}else{
+
+document
+.getElementById("appScreen")
+.classList.add("hidden");
+
+document
+.getElementById("authScreen")
+.classList.remove("hidden");
+
+}
+
+}
+);
+
+
+/* =========================
+USER
+========================= */
+
+async function loadUser(){
+
+if(!currentUser)return;
+
+const snap=
+await getDoc(
+doc(db,"users",currentUser.uid)
+);
+
+let data=snap.data()||{};
+
+const name=
+data.name||
+currentUser.displayName||
+"MyTube User";
+
+document.getElementById("profileName")
+.textContent=name;
+
+document.getElementById("profileEmail")
+.textContent=
+data.email||
+currentUser.email||
+"";
+
+document.getElementById("profileStats")
+.textContent=
+`${data.subscribers||0} Subscribers`;
+
+const photo=
+data.photoUrl||
+currentUser.photoURL||
+"https://ui-avatars.com/api/?name="+
+encodeURIComponent(name);
+
+document.getElementById("profileAvatar")
+.src=photo;
+
+document.getElementById("headerAvatar")
+.src=photo;
+
+document.getElementById("profileBanner")
+.src=
+data.bannerUrl||
+"https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=1200&q=80";
+
+document.getElementById("editName")
+.value=name;
+
+}
+
+
+/* =========================
+PAGES
+========================= */
+
+const pages=[
+"home",
+"trending",
+"shorts",
+"subscriptions",
+"saved",
+"history",
+"games",
+"profile",
+"upload",
+"notifications",
+"admin"
+];
+
+
+window.showPage=function(page){
+
+pages.forEach(p=>{
+
+const el=
+document.getElementById(
+p+"Page"
+);
+
+if(el){
+
+el.classList.toggle(
+"hidden",
+p!==page
+);
+
+}
+
+});
+
+if(page==="profile")
+loadMyVideos();
+
+if(page==="saved")
+loadSaved();
+
+if(page==="history")
+loadHistory();
+
+if(page==="trending")
+loadTrending();
+
+if(page==="shorts")
+loadShorts();
+
+if(page==="subscriptions")
+loadSubscriptions();
+
+if(page==="notifications")
+loadNotifications();
+
+if(page==="games")
+loadGames();
+
+if(page==="admin")
+loadAdmin();
+
+};
+
+
+/* =========================
+VIDEOS
+========================= */
+
+async function loadVideos(){
+
+const grid=
+document.getElementById("videoGrid");
+
+grid.innerHTML=
+'<div class="empty">Loading videos...</div>';
+
+try{
+
+const q=
+query(
+collection(db,"videos"),
+orderBy("timestamp","desc")
+);
+
+const snap=
+await getDocs(q);
+
+allVideos=[];
+
+snap.forEach(d=>{
+
+allVideos.push({
+id:d.id,
+...d.data()
+});
+
+});
+
+renderVideos(
+allVideos,
+"videoGrid"
+);
+
+}catch(e){
+
+grid.innerHTML=
+`<div class="empty">
+${escapeHtml(e.message)}
+</div>`;
+
+}
+
+}
+
+
+function renderVideos(
+videos,
+elementId
+){
+
+const grid=
+document.getElementById(
+elementId
+);
+
+if(!videos.length){
+
+grid.innerHTML=
+'<div class="empty">No videos found.</div>';
+
+return;
+
+}
+
+grid.innerHTML="";
+
+let count=0;
+
+videos.forEach(video=>{
+
+if(
+currentCategory!=="All" &&
+video.category!==currentCategory
+)return;
+
+count++;
+
+const card=
+document.createElement("div");
+
+card.className="video-card";
+
+const thumb=
+video.thumbnailUrl||
+"https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&w=800&q=80";
+
+card.innerHTML=`
+
+<img
+class="thumb"
+src="${escapeHtml(thumb)}">
+
+<div class="video-info">
+
+<div class="video-title">
+${escapeHtml(video.title||"Untitled")}
+</div>
+
+<div class="video-meta">
+${escapeHtml(video.ownerName||"User")}
+· ${video.views||0} views
+</div>
+
+<div class="video-meta">
+${escapeHtml(video.category||"General")}
+</div>
+
+<div class="card-actions">
+
+<button class="small-btn">
+▶ Watch
+</button>
+
+<button class="small-btn save-card">
+🔖 Save
+</button>
+
+</div>
+
+</div>
+`;
+
+card.querySelector(".thumb")
+.onclick=()=>openVideo(video);
+
+card.querySelector(".video-title")
+.onclick=()=>openVideo(video);
+
+card.querySelector(".small-btn")
+.onclick=()=>openVideo(video);
+
+card.querySelector(".save-card")
+.onclick=e=>{
+
+e.stopPropagation();
+
+saveVideo(video.id);
+
+};
+
+grid.appendChild(card);
+
+});
+
+if(count===0){
+
+grid.innerHTML=
+'<div class="empty">No videos in this category.</div>';
+
+}
+
+}
+
+
+function escapeHtml(value){
+
+return String(value??"")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+
+window.filterCategory=
+function(category,button){
+
+currentCategory=category;
+
+document
+.querySelectorAll(".chip")
+.forEach(x=>
+x.classList.remove("active")
+);
+
+button.classList.add("active");
+
+renderVideos(
+allVideos,
+"videoGrid"
+);
+
+};
+
+
+/* =========================
+SEARCH
+========================= */
+
+window.searchVideos=function(){
+
+const term=
+document
+.getElementById("searchInput")
+.value
+.toLowerCase()
+.trim();
+
+const results=
+allVideos.filter(v=>
+
+(v.title||"")
+.toLowerCase()
+.includes(term)||
+
+(v.ownerName||"")
+.toLowerCase()
+.includes(term)||
+
+(v.category||"")
+.toLowerCase()
+.includes(term)
+
+);
+
+showPage("home");
+
+renderVideos(
+results,
+"videoGrid"
+);
+
+};
+
+
+/* =========================
+WATCH
+========================= */
+
+window.openVideo=
+async function(video){
+
+currentVideo=video;
+
+document.getElementById("watchPlayer")
+.src=video.videoUrl;
+
+document.getElementById("watchTitle")
+.textContent=
+video.title||"Untitled";
+
+document.getElementById("watchMeta")
+.textContent=
+`${video.ownerName||"User"} · ${
+video.views||0
+} views · ${
+video.category||"General"
+}`;
+
+document
+.getElementById("videoModal")
+.classList.remove("hidden");
+
+try{
+
+await updateDoc(
+doc(db,"videos",video.id),
+{
+views:increment(1)
+}
+);
+
+}catch(e){
+
+console.log(e);
+
+}
+
+try{
+
+await addDoc(
+collection(
+db,
+"users",
+currentUser.uid,
+"history"
+),
+{
+videoId:video.id,
+title:video.title,
+videoUrl:video.videoUrl,
+timestamp:serverTimestamp()
+}
+);
+
+}catch(e){
+
+console.log(e);
+
+}
+
+loadComments();
+
+};
+
+
+window.closeModal=function(id){
+
+document
+.getElementById(id)
+.classList.add("hidden");
+
+};
+
+
+document
+.getElementById("likeButton")
+.onclick=async()=>{
+
+if(!currentVideo)return;
+
+await updateDoc(
+doc(db,"videos",currentVideo.id),
+{
+likes:increment(1)
+}
+);
+
+alert("Liked!");
+
+};
+
+
+document
+.getElementById("saveButton")
+.onclick=async()=>{
+
+if(!currentVideo)return;
+
+await saveVideo(
+currentVideo.id
+);
+
+};
+
+
+document
+.getElementById("subscribeButton")
+.onclick=async()=>{
+
+if(!currentVideo)return;
+
+await subscribe(
+currentVideo.ownerId
+);
+
+};
+
+
+/* =========================
+COMMENTS
+========================= */
+
+async function loadComments(){
+
+if(!currentVideo)return;
+
+const list=
+document.getElementById(
+"commentsList"
+);
+
+list.innerHTML=
+'<div class="empty">Loading comments...</div>';
+
+const q=
+query(
+collection(
+db,
+"videos",
+currentVideo.id,
+"comments"
+),
+orderBy(
+"timestamp",
+"desc"
+)
+);
+
+const snap=
+await getDocs(q);
+
+list.innerHTML="";
+
+if(snap.empty){
+
+list.innerHTML=
+'<div class="empty">No comments yet.</div>';
+
+return;
+
+}
+
+snap.forEach(d=>{
+
+const c=d.data();
+
+const div=
+document.createElement("div");
+
+div.className="comment";
+
+div.innerHTML=`
+
+<strong>
+${escapeHtml(c.userName||"User")}
+</strong>
+
+<div>
+${escapeHtml(c.text||"")}
+</div>
+
+<small>
+Comment
+</small>
+
+`;
+
+list.appendChild(div);
+
+});
+
+}
+
+
+window.addComment=
+async function(){
+
+const input=
+document.getElementById(
+"commentInput"
+);
+
+const text=
+input.value.trim();
+
+if(!text||!currentVideo)return;
+
+await addDoc(
+collection(
+db,
+"videos",
+currentVideo.id,
+"comments"
+),
+{
+userId:currentUser.uid,
+userName:
+currentUser.displayName||
+currentUser.email||
+"User",
+text:text,
+timestamp:serverTimestamp()
+}
+);
+
+input.value="";
+
+await loadComments();
+
+};
+
+
+/* =========================
+SAVE
+========================= */
+
+async function saveVideo(videoId){
+
+if(!currentUser)return;
+
+await setDoc(
+doc(
+db,
+"users",
+currentUser.uid,
+"saved",
+videoId
+),
+{
+videoId:videoId,
+timestamp:serverTimestamp()
+}
+);
+
+alert("Video saved!");
+
+}
+
+
+async function loadSaved(){
+
+const grid=
+document.getElementById(
+"savedGrid"
+);
+
+grid.innerHTML=
+'<div class="empty">Loading saved videos...</div>';
+
+const snap=
+await getDocs(
+collection(
+db,
+"users",
+currentUser.uid,
+"saved"
+)
+);
+
+const ids=
+snap.docs.map(
+x=>x.id
+);
+
+const videos=
+allVideos.filter(
+v=>ids.includes(v.id)
+);
+
+renderVideos(
+videos,
+"savedGrid"
+);
+
+}
+
+
+/* =========================
+HISTORY
+========================= */
+
+async function loadHistory(){
+
+const grid=
+document.getElementById(
+"historyGrid"
+);
+
+const snap=
+await getDocs(
+collection(
+db,
+"users",
+currentUser.uid,
+"history"
+)
+);
+
+const ids=
+snap.docs.map(
+d=>d.data().videoId
+);
+
+const videos=
+allVideos.filter(
+v=>ids.includes(v.id)
+);
+
+renderVideos(
+videos,
+"historyGrid"
+);
+
+}
+
+
+/* =========================
+MY VIDEOS
+========================= */
+
+async function loadMyVideos(){
+
+const videos=
+allVideos.filter(
+v=>v.ownerId===currentUser.uid
+);
+
+renderVideos(
+videos,
+"myVideosGrid"
+);
+
+}
+
+
+/* =========================
+TRENDING
+========================= */
+
+async function loadTrending(){
+
+const sorted=
+[...allVideos].sort(
+(a,b)=>
+(b.views||0)-
+(a.views||0)
+);
+
+renderVideos(
+sorted,
+"trendingGrid"
+);
+
+}
+
+
+/* =========================
+SHORTS
+========================= */
+
+async function loadShorts(){
+
+const shorts=
+allVideos.filter(
+v=>v.type==="short"
+);
+
+renderVideos(
+shorts,
+"shortsGrid"
+);
+
+}
+
+
+/* =========================
+SUBSCRIPTIONS
+========================= */
+
+async function loadSubscriptions(){
+
+const snap=
+await getDocs(
+collection(
+db,
+"users",
+currentUser.uid,
+"subscriptions"
+)
+);
+
+const ids=
+snap.docs.map(
+d=>d.id
+);
+
+const videos=
+allVideos.filter(
+v=>ids.includes(v.ownerId)
+);
+
+renderVideos(
+videos,
+"subscriptionsGrid"
+);
+
+}
+
+
+async function subscribe(creatorId){
+
+if(
+!creatorId||
+creatorId===currentUser.uid
+)return;
+
+const subscriptionRef=
+doc(
+db,
+"users",
+currentUser.uid,
+"subscriptions",
+creatorId
+);
+
+const existing=
+await getDoc(
+subscriptionRef
+);
+
+if(existing.exists()){
+
+alert("Already subscribed.");
+
+return;
+
+}
+
+await setDoc(
+subscriptionRef,
+{
+creatorId:creatorId,
+timestamp:serverTimestamp()
+}
+);
+
+await updateDoc(
+doc(db,"users",creatorId),
+{
+subscribers:increment(1)
+}
+);
+
+alert("Subscribed!");
+
+}
+
+
+/* =========================
+NOTIFICATIONS
+========================= */
+
+async function loadNotifications(){
+
+const list=
+document.getElementById(
+"notificationsList"
+);
+
+const snap=
+await getDocs(
+collection(
+db,
+"users",
+currentUser.uid,
+"notifications"
+)
+);
+
+list.innerHTML="";
+
+if(snap.empty){
+
+list.innerHTML=
+'<div class="empty">No notifications.</div>';
+
+return;
+
+}
+
+snap.forEach(d=>{
+
+const n=d.data();
+
+const div=
+document.createElement("div");
+
+div.className="admin-item";
+
+div.innerHTML=`
+
+<div>
+
+<strong>
+${escapeHtml(n.title||"Notification")}
+</strong>
+
+<div style="color:#aaa;margin-top:5px">
+
+${escapeHtml(n.body||"")}
+
+</div>
+
+</div>
+
+`;
+
+list.appendChild(div);
+
+});
+
+}
+
+
+/* =========================
+PROFILE
+========================= */
+
+window.openProfileModal=
+function(){
+
+document
+.getElementById("profileModal")
+.classList.remove("hidden");
+
+};
+
+
+window.saveProfile=
+async function(){
+
+const name=
+document
+.getElementById("editName")
+.value
+.trim();
+
+const photoFile=
+document
+.getElementById("profilePhotoFile")
+.files[0];
+
+const bannerFile=
+document
+.getElementById("bannerFile")
+.files[0];
+
+let photoUrl=null;
+
+let bannerUrl=null;
+
+if(photoFile){
+
+const r=
+ref(
+storage,
+`profiles/${currentUser.uid}/profile.jpg`
+);
+
+await uploadBytesResumable(
+r,
+photoFile
+);
+
+photoUrl=
+await getDownloadURL(r);
+
+}
+
+if(bannerFile){
+
+const r=
+ref(
+storage,
+`profiles/${currentUser.uid}/banner.jpg`
+);
+
+await uploadBytesResumable(
+r,
+bannerFile
+);
+
+bannerUrl=
+await getDownloadURL(r);
+
+}
+
+const data={
+name:name
+};
+
+if(photoUrl)
+data.photoUrl=photoUrl;
+
+if(bannerUrl)
+data.bannerUrl=bannerUrl;
+
+await updateDoc(
+doc(
+db,
+"users",
+currentUser.uid
+),
+data
+);
+
+await updateProfile(
+currentUser,
+{
+displayName:name,
+...(photoUrl?
+{photoURL:photoUrl}:
+{})
+}
+);
+
+closeModal(
+"profileModal"
+);
+
+await loadUser();
+
+alert("Profile updated!");
+
+};
+
+
+/* =====================================================
+FAST VIDEO UPLOAD
+===================================================== */
+
+window.showSelectedVideo=function(){
+
+const file=
+document
+.getElementById("videoFile")
+.files[0];
+
+const box=
+document.getElementById(
+"videoFileInfo"
+);
+
+if(!file){
+
+box.classList.add("hidden");
+
+return;
+
+}
+
+const mb=
+file.size/
+(1024*1024);
+
+box.classList.remove("hidden");
+
+box.innerHTML=`
+
+<strong>
+Selected Video
+</strong>
+
+<br>
+
+Name:
+${escapeHtml(file.name)}
+
+<br>
+
+Size:
+${formatMB(mb)}
+
+<br>
+
+Type:
+${escapeHtml(file.type||"Video")}
+
+`;
+
+};
+
+
+function formatMB(bytesOrMB){
+
+let mb;
+
+if(bytesOrMB<1024*1024){
+
+mb=bytesOrMB;
+
+}else{
+
+mb=bytesOrMB/
+(1024*1024);
+
+}
+
+return mb.toFixed(2)+" MB";
+
+}
+
+
+function formatSpeed(bytesPerSecond){
+
+if(!bytesPerSecond||
+bytesPerSecond<=0)
+return "0 MB/s";
+
+return (
+bytesPerSecond/
+1024/
+1024
+).toFixed(2)+" MB/s";
+
+}
+
+
+function formatTime(seconds){
+
+if(
+!isFinite(seconds)||
+seconds<=0
+)
+return "Calculating...";
+
+seconds=Math.round(seconds);
+
+if(seconds<60)
+return seconds+" sec";
+
+const minutes=
+Math.floor(seconds/60);
+
+const sec=
+seconds%60;
+
+if(minutes<60)
+return `${minutes}m ${sec}s`;
+
+const hours=
+Math.floor(minutes/60);
+
+const mins=
+minutes%60;
+
+return `${hours}h ${mins}m`;
+
+}
+
+
+/*
+Fast upload system.
+
+Important:
+Firebase uploadBytesResumable already uses
+resumable/chunked uploads.
+
+This version additionally:
+- tracks speed
+- tracks progress
+- tracks uploaded MB
+- calculates remaining time
+- disables duplicate clicks
+- uploads thumbnail after video
+- writes Firestore only after successful upload
+*/
+
+window.uploadVideo=
+async function(){
+
+if(!currentUser){
+
+alert("Please sign in first.");
+
+return;
+
+}
+
+const file=
+document
+.getElementById("videoFile")
+.files[0];
+
+const thumbnail=
+document
+.getElementById("thumbnailFile")
+.files[0];
+
+const title=
+document
+.getElementById("videoTitle")
+.value
+.trim();
+
+const description=
+document
+.getElementById("videoDescription")
+.value
+.trim();
+
+const category=
+document
+.getElementById("videoCategory")
+.value;
+
+const type=
+document
+.getElementById("videoType")
+.value;
+
+const progressWrap=
+document.getElementById(
+"uploadProgress"
+);
+
+const progressBar=
+document.getElementById(
+"progressBar"
+);
+
+const progressNumber=
+document.getElementById(
+"progressNumber"
+);
+
+const uploadedSize=
+document.getElementById(
+"uploadedSize"
+);
+
+const uploadSpeed=
+document.getElementById(
+"uploadSpeed"
+);
+
+const uploadTime=
+document.getElementById(
+"uploadTime"
+);
+
+const status=
+document.getElementById(
+"uploadStatus"
+);
+
+const uploadButton=
+document.getElementById(
+"uploadButton"
+);
+
+
+if(!file){
+
+alert("Select a video first.");
+
+return;
+
+}
+
+if(!title){
+
+alert("Enter video title.");
+
+return;
+
+}
+
+
+/* Disable button */
+
+uploadButton.disabled=true;
+
+uploadButton.textContent=
+"⏳ Uploading...";
+
+
+progressWrap.style.display=
+"block";
+
+progressBar.style.width=
+"0%";
+
+progressNumber.textContent=
+"0%";
+
+uploadedSize.textContent=
+"0 MB";
+
+uploadSpeed.textContent=
+"0 MB/s";
+
+uploadTime.textContent=
+"Calculating...";
+
+status.textContent=
+"Starting fast upload...";
+
+
+try{
+
+/* ==================================
+CREATE UNIQUE STORAGE PATH
+================================== */
+
+const safeName=
+file.name
+.replace(
+/[^a-zA-Z0-9._-]/g,
+"_"
+);
+
+const fileId=
+Date.now()+"_"+Math.random()
+.toString(36)
+.substring(2,9);
+
+const videoPath=
+`videos/${currentUser.uid}/${fileId}_${safeName}`;
+
+const videoRef=
+ref(
+storage,
+videoPath
+);
+
+
+/* ==================================
+START RESUMABLE UPLOAD
+================================== */
+
+const task=
+uploadBytesResumable(
+videoRef,
+file,
+{
+contentType:
+file.type||"video/mp4",
+
+cacheControl:
+"public,max-age=31536000"
+}
+);
+
+
+/* ==================================
+SPEED TRACKING
+================================== */
+
+const startTime=
+performance.now();
+
+let lastBytes=0;
+
+let lastTime=startTime;
+
+task.on(
+"state_changed",
+
+snapshot=>{
+
+const transferred=
+snapshot.bytesTransferred;
+
+const total=
+snapshot.totalBytes;
+
+const percent=
+Math.round(
+transferred/
+total*
+100
+);
+
+
+/* Progress */
+
+progressBar.style.width=
+percent+"%";
+
+progressNumber.textContent=
+percent+"%";
+
+
+/* Uploaded MB */
+
+uploadedSize.textContent=
+formatMB(
+transferred
+);
+
+
+/* Speed */
+
+const now=
+performance.now();
+
+const deltaBytes=
+transferred-lastBytes;
+
+const deltaSeconds=
+(now-lastTime)/1000;
+
+if(deltaSeconds>0){
+
+const instantSpeed=
+deltaBytes/deltaSeconds;
+
+uploadSpeed.textContent=
+formatSpeed(
+instantSpeed
+);
+
+}
+
+
+lastBytes=transferred;
+
+lastTime=now;
+
+
+/* Remaining time */
+
+const elapsed=
+(now-startTime)/1000;
+
+if(
+elapsed>1 &&
+transferred>0
+){
+
+const speed=
+transferred/
+elapsed;
+
+const remainingBytes=
+total-transferred;
+
+const seconds=
+remainingBytes/speed;
+
+uploadTime.textContent=
+formatTime(seconds);
+
+}
+
+
+status.textContent=
+`Uploading video... ${percent}%`;
+
+},
+
+error=>{
+
+console.error(error);
+
+status.textContent=
+"Upload failed: "+
+error.message;
+
+status.style.color=
+"#ff6b7f";
+
+uploadButton.disabled=false;
+
+uploadButton.textContent=
+"🚀 Try Upload Again";
+
+},
+
+async()=>{
+
+try{
+
+/* ==================================
+VIDEO COMPLETE
+================================== */
+
+progressBar.style.width=
+"100%";
+
+progressNumber.textContent=
+"100%";
+
+status.textContent=
+"Video uploaded. Processing thumbnail...";
+
+const videoUrl=
+await getDownloadURL(
+task.snapshot.ref
+);
+
+
+/* ==================================
+THUMBNAIL
+================================== */
+
+let thumbnailUrl="";
+
+if(thumbnail){
+
+const thumbName=
+thumbnail.name
+.replace(
+/[^a-zA-Z0-9._-]/g,
+"_"
+);
+
+const thumbRef=
+ref(
+storage,
+`thumbnails/${currentUser.uid}/${Date.now()}_${thumbName}`
+);
+
+const thumbTask=
+uploadBytesResumable(
+thumbRef,
+thumbnail,
+{
+contentType:
+thumbnail.type||"image/jpeg",
+
+cacheControl:
+"public,max-age=31536000"
+}
+);
+
+await new Promise(
+(resolve,reject)=>{
+
+thumbTask.on(
+"state_changed",
+
+snapshot=>{
+
+const p=
+Math.round(
+snapshot.bytesTransferred/
+snapshot.totalBytes*
+100
+);
+
+status.textContent=
+`Uploading thumbnail... ${p}%`;
+
+},
+
+reject,
+
+async()=>{
+
+thumbnailUrl=
+await getDownloadURL(
+thumbTask.snapshot.ref
+);
+
+resolve();
+
+}
+
+);
+
+}
+);
+
+}
+
+
+/* ==================================
+FIRESTORE
+================================== */
+
+status.textContent=
+"Saving video information...";
+
+await addDoc(
+collection(db,"videos"),
+{
+
+ownerId:
+currentUser.uid,
+
+ownerName:
+currentUser.displayName||
+currentUser.email||
+"User",
+
+title:title,
+
+description:
+description,
+
+category:
+category,
+
+type:type,
+
+videoUrl:
+videoUrl,
+
+thumbnailUrl:
+thumbnailUrl,
+
+views:0,
+
+likes:0,
+
+timestamp:
+serverTimestamp()
+
+}
+);
+
+
+/* ==================================
+FINISH
+================================== */
+
+progressBar.style.width=
+"100%";
+
+progressNumber.textContent=
+"100%";
+
+uploadSpeed.textContent=
+"Complete";
+
+uploadTime.textContent=
+"Done";
+
+status.classList.add(
+"success-text"
+);
+
+status.textContent=
+"✅ Video uploaded successfully!";
+
+
+/* Clear inputs */
+
+document
+.getElementById("videoTitle")
+.value="";
+
+document
+.getElementById("videoDescription")
+.value="";
+
+document
+.getElementById("videoFile")
+.value="";
+
+document
+.getElementById("thumbnailFile")
+.value="";
+
+document
+.getElementById("videoFileInfo")
+.classList.add("hidden");
+
+
+await loadVideos();
+
+
+uploadButton.disabled=false;
+
+uploadButton.textContent=
+"🚀 Fast Upload to MyTube Master";
+
+
+setTimeout(()=>{
+
+showPage("home");
+
+},1200);
+
+
+}catch(error){
+
+console.error(error);
+
+status.style.color=
+"#ff6b7f";
+
+status.textContent=
+"Upload completed but saving failed: "+
+error.message;
+
+uploadButton.disabled=false;
+
+uploadButton.textContent=
+"🚀 Try Again";
+
+}
+
+}
+
+);
+
+}catch(error){
+
+console.error(error);
+
+status.style.color=
+"#ff6b7f";
+
+status.textContent=
+"Upload error: "+
+error.message;
+
+uploadButton.disabled=false;
+
+uploadButton.textContent=
+"🚀 Try Again";
+
+}
+
+};
+
+
+/* =========================
+GAMES
+========================= */
+
+window.openGameModal=
+function(){
+
+document
+.getElementById("gameModal")
+.classList.remove("hidden");
+
+};
+
+
+window.addGame=
+async function(){
+
+const name=
+document
+.getElementById("gameName")
+.value
+.trim();
+
+const category=
+document
+.getElementById("gameCategory")
+.value
+.trim();
+
+const url=
+document
+.getElementById("gameUrl")
+.value
+.trim();
+
+if(!name||!url){
+
+alert("Enter game name and URL.");
+
+return;
+
+}
+
+await addDoc(
+collection(db,"games"),
+{
+name:name,
+category:category,
+url:url,
+ownerId:currentUser.uid,
+timestamp:serverTimestamp()
+}
+);
+
+closeModal("gameModal");
+
+document.getElementById("gameName")
+.value="";
+
+document.getElementById("gameCategory")
+.value="";
+
+document.getElementById("gameUrl")
+.value="";
+
+loadGames();
+
+};
+
+
+async function loadGames(){
+
+const grid=
+document.getElementById(
+"gamesGrid"
+);
+
+const snap=
+await getDocs(
+collection(db,"games")
+);
+
+grid.innerHTML="";
+
+if(snap.empty){
+
+grid.innerHTML=
+'<div class="empty">No games yet.</div>';
+
+return;
+
+}
+
+snap.forEach(d=>{
+
+const g=d.data();
+
+const card=
+document.createElement("div");
+
+card.className="video-card";
+
+card.innerHTML=`
+
+<div style="
+aspect-ratio:16/9;
+background:#24242b;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:60px">
+
+🎮
+
+</div>
+
+<div class="video-info">
+
+<div class="video-title">
+${escapeHtml(g.name)}
+</div>
+
+<div class="video-meta">
+${escapeHtml(g.category||"Game")}
+</div>
+
+<div class="card-actions">
+
+<button class="primary">
+▶ Play
+</button>
+
+</div>
+
+</div>
+`;
+
+card.querySelector("button")
+.onclick=()=>{
+
+window.open(
+g.url,
+"_blank"
+);
+
+};
+
+grid.appendChild(card);
+
+});
+
+}
+
+
+/* =========================
+ADMIN
+========================= */
+
+async function checkAdmin(){
+
+const snap=
+await getDoc(
+doc(
+db,
+"users",
+currentUser.uid
+)
+);
+
+const admin=
+snap.exists()&&
+snap.data().isAdmin===true;
+
+document
+.getElementById("adminNav")
+.classList.toggle(
+"hidden",
+!admin
+);
+
+}
+
+
+async function loadAdmin(){
+
+const snap=
+await getDoc(
+doc(
+db,
+"users",
+currentUser.uid
+)
+);
+
+if(
+!snap.exists()||
+snap.data().isAdmin!==true
+){
+
+alert("Admin access denied.");
+
+showPage("home");
+
+return;
+
+}
+
+const usersSnap=
+await getDocs(
+collection(db,"users")
+);
+
+const videosSnap=
+await getDocs(
+collection(db,"videos")
+);
+
+document.getElementById("adminUsers")
+.textContent=
+usersSnap.size;
+
+document.getElementById("adminVideos")
+.textContent=
+videosSnap.size;
+
+let comments=0;
+
+for(
+const video of videosSnap.docs
+){
+
+const c=
+await getDocs(
+collection(
+db,
+"videos",
+video.id,
+"comments"
+)
+);
+
+comments+=c.size;
+
+}
+
+document.getElementById("adminComments")
+.textContent=
+comments;
+
+const list=
+document.getElementById(
+"adminVideoList"
+);
+
+list.innerHTML="";
+
+videosSnap.forEach(d=>{
+
+const v=d.data();
+
+const div=
+document.createElement("div");
+
+div.className="admin-item";
+
+div.innerHTML=`
+
+<div>
+
+<strong>
+${escapeHtml(v.title||"")}
+</strong>
+
+<div style="color:#aaa">
+
+${escapeHtml(v.ownerName||"")}
+
+</div>
+
+</div>
+
+<button class="secondary">
+Delete
+</button>
+
+`;
+
+div.querySelector("button")
+.onclick=async()=>{
+
+if(!confirm(
+"Delete this video?"
+))
+return;
+
+await deleteDoc(
+doc(db,"videos",d.id)
+);
+
+await loadVideos();
+
+await loadAdmin();
+
+};
+
+list.appendChild(div);
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
